@@ -14,6 +14,7 @@ import math
 import random
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.lib.io import file_io
 import scipy
 import skimage.color
 import skimage.io
@@ -356,14 +357,15 @@ class Dataset(object):
         """Load the specified image and return a [H,W,3] Numpy array.
         """
         # Load image
-        image = skimage.io.imread(self.image_info[image_id]['path'])
-        # If grayscale. Convert to RGB for consistency.
-        if image.ndim != 3:
-            image = skimage.color.gray2rgb(image)
-        # If has an alpha channel, remove it for consistency
-        if image.shape[-1] == 4:
-            image = image[..., :3]
-        return image
+        with file_io.FileIO(self.image_info[image_id]['path'], 'rb') as fileobj:
+            image = skimage.io.imread(fileobj)
+            # If grayscale. Convert to RGB for consistency.
+            if image.ndim != 3:
+                image = skimage.color.gray2rgb(image)
+            # If has an alpha channel, remove it for consistency
+            if image.shape[-1] == 4:
+                image = image[..., :3]
+            return image
 
     def load_mask(self, image_id):
         """Load instance masks for the given image.

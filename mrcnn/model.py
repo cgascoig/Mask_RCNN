@@ -17,6 +17,7 @@ from collections import OrderedDict
 import multiprocessing
 import numpy as np
 import tensorflow as tf
+from tensorflow.python.lib.io import file_io
 import keras
 import keras.backend as K
 import keras.layers as KL
@@ -2113,7 +2114,6 @@ class MaskRCNN():
         if h5py is None:
             raise ImportError('`load_weights` requires h5py.')
 
-        from tensorflow.python.lib.io import file_io
         fileobj = file_io.FileIO(filepath, 'rb')
         f = h5py.File(fileobj, mode='r')
         if 'layer_names' not in f.attrs and 'model_weights' in f:
